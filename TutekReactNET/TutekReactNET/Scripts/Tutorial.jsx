@@ -60,9 +60,11 @@ class CommentForm extends React.Component {
         this.handleTextChange = this.handleTextChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
+    //manipulacja pola w DOM
     handleAuthorChange(e) {
         this.setState({ author: e.target.value });
     }
+    //manipulacja pola w DOM
     handleTextChange(e) {
         this.setState({ text: e.target.value });
     }

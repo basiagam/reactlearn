@@ -13,7 +13,7 @@
             this.state={dateVisible:false};
         }
         render(){
-            return(
+            return(// if state.dateVisible== true && DateComponent => wyswietl()
                 <div>
                     <button onClick={this.onButtonClick.bind(this)}>Kliknij</button>
                     {this.state.dateVisible && <DateComponent />}            
@@ -41,11 +41,11 @@
                 date: new Date()
             });
         }
-
+        //funkcja wywoływana od razu po ustawieniu komponentu, ustawiamy odswiezanie
         componentDidMount(){
             this.timerId = window.setInterval(this.updateDate.bind(this),1000)
         }
-
+        // funkcja tuz przed odmontowaniem komponentu, usuwamy interwał odświeżania
         componentWillUnmount(){
             window.clearInterval(this.timerId)
         }
