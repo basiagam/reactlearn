@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://unpkg.com/react@15/dist/react.min.js"> </script><script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js">
+        </script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    </head>
+    <body>
+        <div id="root">
+
+        </div>
+        <script type=text/babel>
+            function MojKomponent(){
+                return(
+                    <div>
+                    <h1>Witaj, Świecie!</h1>
+                    <h2>blabla bla</h2>
+                    </div>        
+                );
+            }
+            function DrugiKomponent() {
+                return(
+                    <h1>I oto drugi</h1>
+                );
+            }
+            ReactDOM.render(
+                <div>
+                    <MojKomponent />
+                    <DrugiKomponent />    
+                </div>,                
+                document.getElementById('root')
+            );
+        </script>
+    </body>
+</html>

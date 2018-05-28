@@ -1,0 +1,88 @@
+<html>
+        <head>
+            <meta charset="UTF-8">
+            <script>var exports = {};</script>
+            <script src="https://unpkg.com/react@15/dist/react.min.js"> </script><script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js">
+            </script>
+            <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+            <link rel="stylesheet" href="css.css">
+        </head>
+        <body>
+          <div id="app">  
+          </div>  
+          <script type=text/babel>
+            function AppHeader() {
+              return (
+                <header className="ui fixed menu">
+                  <nav className="ui container">
+                    <a href="#" className="header item">
+                      <img
+                        className="logo"
+                        src="https://typeofweb.com/wp-content/uploads/2017/08/cropped-typeofweb_logo-04-white-smaller-1-e1504359870362.png"
+                      />
+                      Lista kontaktów
+                    </a>
+                    <div className="header item">
+                      <button className="ui button">Dodaj</button>
+                    </div>
+                  </nav>
+                </header>
+              );
+            }
+            export class ContactsList extends React.Component {
+             contactToContactItem = contact =>{
+               const avatarUrl = contact.picture.thumbnail;
+               const {title,first,last} = contact.name;
+               const name = `${title} ${first} ${last}`.trim();
+               const phone = contact.phone;
+               const key = contact.login.username;
+              return <ContactItem key={key} avatarUrl={avatarUrl} name={name} phone={phone} />
+             };
+              render(){
+                return (
+                  <ul className="ui relaxed divided list selection">
+                    {this.props.contacts.map(this.contactToContactItem)}
+                  </ul>
+                );
+              } 
+            }
+
+            export const ContactItem = ({ avatarUrl, name, phone}) =>{
+                return(
+                  <li className="item">
+                  <img src={avatarUrl} className="ui mini rounded image" alt="" />
+                  <div className="content">
+                    <h4 className="header">{name}</h4>
+                    <div className="description">{phone}</div>
+                  </div>
+                </li>
+                );
+            };
+            export class App extends React.Component {
+              state={
+                contacts: []
+              };
+
+              componentDidMount(){
+                fetch("https://randomuser.me/api/?format=json&results=10")
+                  .then(res=>res.json())
+                  .then(json=>this.setState({contacts: json.results}));
+              }
+              render(){
+                return (  
+                  <div>
+                  <AppHeader />
+                  <main className="ui main text container">
+                    <ContactsList contacts={this.state.contacts}/>
+                  </main>
+                </div>
+                );
+              }
+             
+            }
+            ReactDOM.render(<App />, document.getElementById("app"));
+          </script>                            
+        </body>
+    </html>
+    

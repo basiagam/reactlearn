@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="https://unpkg.com/react@15/dist/react.min.js"> </script><script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js">
+</script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="text/babel">
+    class App extends React.Component{
+        constructor(){
+            super();
+            this.state={counter:0,total:0};
+        }
+        render(){
+            return(
+                <div>
+                    <button onClick={this.increment.bind(this)}>+</button>
+                    <output>Stan:{this.state.counter} </output>
+                    <output>Total:{this.state.total}</output>
+                    <button onClick={this.decrement.bind(this)}>-</button>
+                </div>
+            );
+        }
+        increment(){
+            console.log("was",this.state.counter);
+            this.setState({
+                counter: this.state.counter +1,
+                total: this.state.total+1
+            }, ()=> {
+                console.log("is",this.state.counter)
+            })
+        }
+        decrement(){
+            this.setState({
+                counter: this.state.counter -1,
+                total: this.state.total+1
+            })
+        }
+    }
+    ReactDOM.render(<App />, document.getElementById("app"));
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="https://unpkg.com/react@15/dist/react.min.js"> </script><script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js">
+</script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <input type="search">
+        <ul>
+          <li>Michał</li>
+          <li>Ania</li>
+          <li>Kasia</li>
+          <li>Tomek</li>
+        </ul>
+    </div>
+    <script type="text/babel">
+
+    const allUsers = ['Michal', 'Kasia', 'Jacek', 'Marta', 'Tomek', 'Ania'];
+
+    class App extends React.Component{
+        constructor(){
+            super();
+
+            this.state = {
+                filteredUsers: allUsers
+            };
+        }
+        render(){
+            return (
+                <div>
+                <input onInput = {this.filterUsers.bind(this)}/>
+                <UsersList users={this.state.filteredUsers}/>    
+                </div>
+            );
+        }
+
+        filterUsers(e){
+            const text = e.currentTarget.value;
+            const filteredUsers = this.getFilteredUsersForText(text)
+            this.setState({
+                filteredUsers
+            })
+        }
+
+        getFilteredUsersForText(text){
+            return allUsers.filter(user=>user.toLowerCase().includes(text.toLowerCase()))
+        }
+    };
+
+    const UsersList = ({users}) => {
+        if(users.length>0){
+            return (
+            <ul>
+                {users.map(user=> <li key={user}>{user}</li>)}
+            </ul>
+            );
+        }
+        return(
+            <p>Brak wyników!</p>
+        );    
+    };
+        
+    ReactDOM.render(<App />, document.getElementById("app"));
+    </script>
+</body>
+</html>
