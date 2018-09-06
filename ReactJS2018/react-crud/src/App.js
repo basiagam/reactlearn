@@ -7,6 +7,7 @@ class App extends Component {
     super();
     this.state ={
       newTodo: '',
+      editing: false,
       todos: [{
           id: 1, name: 'Buy milk'
         },{
@@ -23,6 +24,8 @@ class App extends Component {
     //bindujemy aby manipulowac state
     this.handleChange = this.handleChange.bind(this);
     this.addTodo = this.addTodo.bind(this);
+    this.deleteTodo = this.deleteTodo.bind(this);
+    this.updateTodo = this.updateTodo.bind(this);
   }
 
   handleChange(event){
@@ -31,10 +34,20 @@ class App extends Component {
     });
   }
 
+  generateTodoId(){
+    const lastTodo = this.state.todos[this.state.todos.length - 1];
+
+    if(lastTodo){
+      return lastTodo.id +1;
+    }
+    return 1
+  }
+
   addTodo(){
+    console.log(this.state.todos);
     const newTodo = {
-        name: this.state.newTodo,
-        id: this.state.todos[this.state.todos.length - 1].id +1
+        id: this.generateTodoId(),
+        name: this.state.newTodo   
     };
 
     //kopiujemy todos ze state do zmiennej i dodajemy nowy todo
@@ -45,7 +58,37 @@ class App extends Component {
       todos: todos,
       newTodo: ''
     });
+  }
 
+  deleteTodo(index){
+    const todos = this.state.todos;
+    delete todos[index];
+
+    this.setState({todos});    
+  }
+
+  editTodo(index){
+    const todo = this.state.todos[index];
+
+    this.setState({
+      editing: true,
+      newTodo: todo.name,
+      editingIndex: index
+    });
+  }
+
+  updateTodo(){
+    const todo = this.state.todos[this.state.editingIndex];
+    todo.name = this.state.newTodo;
+
+    const todos = this.state.todos;
+    todos[this.state.editingIndex] = todo;
+
+    this.setState({
+      todos,
+      editing: false,
+      editingIndex: null, 
+      newTodo: ''});
   }
 
   render() {
@@ -66,15 +109,29 @@ class App extends Component {
           />
 
           <button 
-          onClick={this.addTodo}
-          className="btn-info mb-3 form-control"
-          >Add todo</button>
+          onClick={this.state.editing ? this.updateTodo : this.addTodo}
+          className="btn-info mb-3 form-control">
+          {this.state.editing ? 'Update todo' : 'Add todo'}
+          </button>
 
-          <ul className="list-group">
-            {this.state.todos.map((item) =>{
-              return <li key={item.id} className="list-group-item">{item.name}</li>
+          {
+            !this.state.editing &&
+            <ul className="list-group">
+            {this.state.todos.map((item,index) =>{
+              return <li key={item.id} className="list-group-item">
+                <button 
+                className="btn-sm btn btn-info mr-4"
+                onClick={() => {this.editTodo(index); }}
+                >U</button>
+                {item.name}
+                <button 
+                className="btn-sm btn btn-danger ml-4"
+                onClick={() => {this.deleteTodo(index); }}
+                >X</button>
+                </li>
             })}
           </ul>
+          }
         </div>
       </div> 
     );
