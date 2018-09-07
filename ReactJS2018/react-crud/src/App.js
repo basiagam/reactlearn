@@ -40,26 +40,14 @@ class App extends Component {
     });
   }
 
-  //generowanie id tablicy +1, jeśli tablica mniejsza niz 1 to zwroc 1
-  generateTodoId(){
-    const lastTodo = this.state.todos[this.state.todos.length - 1];
-
-    if(lastTodo){
-      return lastTodo.id +1;
-    }
-    return 1
-  }
-
-  addTodo(){
-    console.log(this.state.todos);
-    const newTodo = {
-        id: this.generateTodoId(),
-        name: this.state.newTodo   
-    };
+  async addTodo(){
+    const response = await axios.post(`${this.URI}/todos`,{
+      name: this.state.newTodo 
+    });
 
     //kopiujemy todos ze state do zmiennej i dodajemy nowy todo
     const todos = this.state.todos;
-    todos.push(newTodo);
+    todos.push(response.data);
 
     this.setState({
       todos: todos,
@@ -81,8 +69,12 @@ class App extends Component {
     },2000)
   }
 
-  deleteTodo(index){
+  async deleteTodo(index){
     const todos = this.state.todos;
+    const todo = todos[index];
+
+    await axios.delete(`${this.URI}/todos/${todo.id}`);
+
     delete todos[index];
 
     this.setState({todos});
@@ -99,12 +91,15 @@ class App extends Component {
     });
   }
 
-  updateTodo(){
+  async updateTodo(){
     const todo = this.state.todos[this.state.editingIndex];
-    todo.name = this.state.newTodo;
+
+    const response = await axios.put(`${this.URI}/todos/${todo.id}`,{
+      name: this.state.newTodo
+    });
 
     const todos = this.state.todos;
-    todos[this.state.editingIndex] = todo;
+    todos[this.state.editingIndex] = response.data;
 
     this.setState({
       todos,
