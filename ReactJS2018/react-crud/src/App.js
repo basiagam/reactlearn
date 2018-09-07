@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+
+import ListItem from './ListItem';
 
 class App extends Component {
   constructor() {
@@ -8,24 +11,27 @@ class App extends Component {
     this.state ={
       newTodo: '',
       editing: false,
-      todos: [{
-          id: 1, name: 'Buy milk'
-        },{
-          id: 2, name: 'Buy some clothes'
-        },
-        {
-          id: 3, name: 'Fix car'
-        },
-        {
-          id: 4, name: 'Pay electrical bills'
-      }]
+      editingIndex: null,
+      notification: null,
+      todos: []
     };
 
-    //bindujemy aby manipulowac state
+    this.URI = 'https://5b9243994c818e001456e8e9.mockapi.io';
+
+    //This binding is necessary to make `this` work in the callback
     this.handleChange = this.handleChange.bind(this);
     this.addTodo = this.addTodo.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
     this.updateTodo = this.updateTodo.bind(this);
+    this.alert = this.alert.bind(this);
+  }
+
+  async componentDidMount(){
+    const response = await axios.get(`${this.URI}/todos`);
+    
+    this.setState({
+      todos: response.data
+    });
   }
 
   handleChange(event){
@@ -34,6 +40,7 @@ class App extends Component {
     });
   }
 
+  //generowanie id tablicy +1, jeśli tablica mniejsza niz 1 to zwroc 1
   generateTodoId(){
     const lastTodo = this.state.todos[this.state.todos.length - 1];
 
@@ -58,13 +65,28 @@ class App extends Component {
       todos: todos,
       newTodo: ''
     });
+
+  }
+
+  alert(notification)
+  {
+    this.setState({
+      notification
+    });
+
+    setTimeout (() => {
+      this.setState({
+        notification:null
+      });
+    },2000)
   }
 
   deleteTodo(index){
     const todos = this.state.todos;
     delete todos[index];
 
-    this.setState({todos});    
+    this.setState({todos});
+    this.alert('Todo deleted successfully');    
   }
 
   editTodo(index){
@@ -89,6 +111,8 @@ class App extends Component {
       editing: false,
       editingIndex: null, 
       newTodo: ''});
+
+      this.alert('Todo updated successfully');
   }
 
   render() {
@@ -99,6 +123,14 @@ class App extends Component {
           <h1 className="App-title">CRUD React</h1>
         </header>
         <div className="container">
+          
+          {
+            this.state.notification &&
+            <div className="alert mt-3 alert-success">
+              <p className="text-center">{this.state.notification}</p>
+            </div>
+          }
+
           <input 
           type="text"
           name="todo" 
@@ -110,25 +142,20 @@ class App extends Component {
 
           <button 
           onClick={this.state.editing ? this.updateTodo : this.addTodo}
-          className="btn-info mb-3 form-control">
+          className="btn-success mb-3 form-control"
+          disabled={this.state.newTodo.length <5}>
           {this.state.editing ? 'Update todo' : 'Add todo'}
           </button>
-
           {
             !this.state.editing &&
             <ul className="list-group">
             {this.state.todos.map((item,index) =>{
-              return <li key={item.id} className="list-group-item">
-                <button 
-                className="btn-sm btn btn-info mr-4"
-                onClick={() => {this.editTodo(index); }}
-                >U</button>
-                {item.name}
-                <button 
-                className="btn-sm btn btn-danger ml-4"
-                onClick={() => {this.deleteTodo(index); }}
-                >X</button>
-                </li>
+               return <ListItem
+                key={item.id}
+                item={item}
+                editTodo={() => {this.editTodo(index);}}
+                deleteTodo={() => {this.deleteTodo(index);}}
+                />; 
             })}
           </ul>
           }
